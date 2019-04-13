@@ -1,0 +1,4 @@
+/* Isolate bulma utilities so we can share them across our project */
+
+@import 'variables';
+@import '~bulma/sass/utilities/_all';
