@@ -26,3 +26,13 @@ func MetricsMiddleware(resource *Resource) Middleware {
 		}
 	}
 }
+
+func AuthMiddleware() Middleware {
+	return func(f httprouter.Handle) httprouter.Handle {
+		return func(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
+			// ..
+
+			f(w, r, p)
+		}
+	}
+}

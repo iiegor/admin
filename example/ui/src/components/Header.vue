@@ -14,9 +14,9 @@
 
             <div class="dropdown-divider"></div>
 
-            <router-link class="dropdown-item" to="/logout">
+            <a class="dropdown-item" v-on:click="logout">
               Log Out
-            </router-link>
+            </a>
           </div>
         </div>
       </a>
@@ -26,7 +26,13 @@
 
 <script>
 export default {
-  name: 'Header'
+  name: 'Header',
+  methods: {
+    logout () {
+      this.$store.dispatch('logout')
+      this.$router.push('/login')
+    }
+  }
 }
 </script>
 

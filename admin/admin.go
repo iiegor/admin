@@ -11,6 +11,7 @@ import (
 
 type AdminConfig struct {
 	Prefix string
+	ApiPrefix string
 	UI     bool
 	DB     *xorm.Engine
 	Debug  bool
@@ -32,6 +33,10 @@ func New(config *AdminConfig) *Admin {
 
 	if admin.AdminConfig.Prefix == "" {
 		admin.AdminConfig.Prefix = "/"
+	}
+
+	if admin.AdminConfig.ApiPrefix == "" {
+		admin.AdminConfig.ApiPrefix = "/api"
 	}
 
 	if admin.AdminConfig.Debug {
@@ -65,9 +70,10 @@ func (admin *Admin) MountTo(mux *http.ServeMux) {
 func (admin *Admin) MuxHandler() http.Handler {
 	router := admin.router
 
+	admin.Auth()
 	admin.ServeUIMeta()
 
-	if !admin.AdminConfig.Debug && admin.AdminConfig.UI {
+	if admin.AdminConfig.UI {
 		admin.ServeUI()
 	}
 

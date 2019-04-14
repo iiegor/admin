@@ -36,7 +36,7 @@ func main() {
 	Admin := admin.New(&admin.AdminConfig{
 		Prefix: "/",
 		Debug:  debug,
-		UI:     true,
+		UI:     !debug,
 		DB:     admin.NewDB("mysql", "root:iegor@/example_db?charset=utf8&parseTime=True"),
 	})
 	Admin.AddResource(new(Course), admin.ResourceConfig{

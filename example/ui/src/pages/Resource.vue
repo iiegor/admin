@@ -13,7 +13,7 @@ import Page from '@/components/Page'
 import DataTable from '@/components/DataTable'
 
 export default {
-  name: 'ModelView',
+  name: 'Resource',
   components: {
     Page,
     DataTable

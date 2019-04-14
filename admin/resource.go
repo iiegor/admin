@@ -94,7 +94,7 @@ func (res *Resource) RegisterRoutes() {
 	for _, method := range res.methods {
 		switch strings.ToLower(method) {
 		case "read":			
-			var resourcePath = path.Join(res.RoutePrefix(), res.ToParam(), res.ParamID())
+			var resourcePath = path.Join(rootPath, res.ParamID())
 			res.GetAdmin().router.GET(resourcePath, ChainMiddlewares(func(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
 				var resourceID = p.ByName(res.ParamID()[1:])
 
@@ -124,7 +124,7 @@ func (res *Resource) RegisterRoutes() {
 				"path":     resourcePath,
 			}).Debug("GET route registered")
 		case "create":
-			var resourcePath = path.Join(res.RoutePrefix(), res.ToParam())
+			var resourcePath = path.Join(rootPath)
 			res.GetAdmin().router.PUT(resourcePath, ChainMiddlewares(func(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
 				w.Write([]byte("Hello, World!"))
 			}, MetricsMiddleware(res)))
@@ -135,7 +135,7 @@ func (res *Resource) RegisterRoutes() {
 				"path":     resourcePath,
 			}).Debug("PUT route registered")
 		case "delete":
-			var resourcePath = path.Join(res.RoutePrefix(), res.ToParam(), res.ParamID())
+			var resourcePath = path.Join(rootPath, res.ParamID())
 			res.GetAdmin().router.DELETE(resourcePath, ChainMiddlewares(func(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
 				w.Write([]byte("Hello, World!"))
 			}, MetricsMiddleware(res)))
@@ -146,7 +146,7 @@ func (res *Resource) RegisterRoutes() {
 				"path":     resourcePath,
 			}).Debug("DELETE route registered")
 		case "update":
-			var resourcePath = path.Join(res.RoutePrefix(), res.ToParam(), res.ParamID())
+			var resourcePath = path.Join(rootPath, res.ParamID())
 			res.GetAdmin().router.PATCH(resourcePath, ChainMiddlewares(func(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
 				w.Write([]byte("Hello, World!"))
 			}, MetricsMiddleware(res)))
@@ -212,7 +212,7 @@ func (res Resource) ToParam() string {
 
 // ParamId e.g. ":course_id"
 func (res Resource) ParamID() string {
-	return fmt.Sprintf(":%v_id", inflection.Singular(ToParamString(res.Name)))
+	return fmt.Sprintf(":%v_id", inflection.Singular(res.ToParam()))
 }
 
 func (res Resource) GetAdmin() *Admin {
@@ -221,5 +221,5 @@ func (res Resource) GetAdmin() *Admin {
 
 // RoutePrefix returns e.g. "/admin/api"
 func (res Resource) RoutePrefix() string {
-	return path.Join(res.admin.Prefix, "api")
+	return path.Join(res.admin.Prefix, res.GetAdmin().ApiPrefix)
 }
