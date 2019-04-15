@@ -22,6 +22,7 @@ func MetricsMiddleware(resource *Resource) Middleware {
 		return func(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
 			atomic.AddInt64(&resource.metrics.hits, 1)
 
+			// Delegamos el request al handler
 			f(w, r, p)
 		}
 	}

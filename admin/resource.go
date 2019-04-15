@@ -71,6 +71,13 @@ func (res *Resource) RegisterRoutes() {
 		fetchFromDatabase := res.NewSlice()
 		err = res.GetAdmin().DB.Table(res.TableName).Limit(query.Limit, query.Offset).Find(fetchFromDatabase)
 		if err != nil {
+			logrus.WithFields(logrus.Fields{
+				"resource": res.Name,
+				"method": "read",
+				"url": r.URL,
+				"error": err.Error(),
+			}).Error()
+
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
@@ -104,6 +111,7 @@ func (res *Resource) RegisterRoutes() {
 					logrus.WithFields(logrus.Fields{
 						"resource": res.Name,
 						"method": method,
+						"url": r.URL,
 						"error": err.Error(),
 					}).Error()
 
@@ -142,7 +150,7 @@ func (res *Resource) RegisterRoutes() {
 
 			logrus.WithFields(logrus.Fields{
 				"resource": res.Name,
-				"method":   method,
+				"method":  	method,
 				"path":     resourcePath,
 			}).Debug("DELETE route registered")
 		case "update":
