@@ -33,11 +33,33 @@ func main() {
 	flag.BoolVar(&debug, "debug", false, "set debug level for logs")
 	flag.Parse()
 
+	AdminAuth := &admin.AdminAuth{
+		Users: []admin.AuthUser{
+			{
+				FirstName: "Iegor",
+				LastName:  "A.",
+				Nickname:  "iegor",
+				Email:     "iegorazuaga@gmail.com",
+				Password:  "iegor123",
+				Role:      admin.AdminRole,
+			},
+			{
+				FirstName: "Guest",
+				LastName:  "User",
+				Nickname:  "guest",
+				Email:     "guest+user@gmail.com",
+				Password:  "iegor123",
+				Role:      admin.GuestRole,
+			},
+		},
+	}
+
 	Admin := admin.New(&admin.AdminConfig{
 		Prefix: "/",
 		Debug:  debug,
 		UI:     !debug,
 		DB:     admin.NewDB("mysql", "root:iegor@/example_db?charset=utf8&parseTime=True"),
+		Auth:   AdminAuth,
 	})
 	Admin.AddResource(new(Course), admin.ResourceConfig{
 		Methods: []string{"read", "create", "update", "delete"},

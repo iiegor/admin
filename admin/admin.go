@@ -15,6 +15,7 @@ type AdminConfig struct {
 	UI     bool
 	DB     *xorm.Engine
 	Debug  bool
+	Auth 	 *AdminAuth
 }
 
 type Admin struct {
@@ -70,7 +71,7 @@ func (admin *Admin) MountTo(mux *http.ServeMux) {
 func (admin *Admin) MuxHandler() http.Handler {
 	router := admin.router
 
-	admin.Auth()
+	admin.ServeAuth()
 	admin.ServeUIMeta()
 
 	if admin.AdminConfig.UI {
