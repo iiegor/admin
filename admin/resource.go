@@ -98,6 +98,8 @@ func (res *Resource) RegisterRoutes() {
 		"path":     rootPath,
 	}).Debug("GET route registered")
 
+	// FIXME: Logs will output method=delete since it's the last iteration done.
+	//  A solution could be storing the current method inside another variable and use that instead.
 	for _, method := range res.methods {
 		switch strings.ToLower(method) {
 		case "read":			
