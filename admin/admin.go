@@ -10,12 +10,12 @@ import (
 )
 
 type AdminConfig struct {
-	Prefix string
+	Prefix    string
 	ApiPrefix string
-	UI     bool
-	DB     *xorm.Engine
-	Debug  bool
-	Auth 	 *AdminAuth
+	UI        bool
+	DB        *xorm.Engine
+	Debug     bool
+	Auth      *AdminAuth
 }
 
 type Admin struct {
@@ -71,8 +71,11 @@ func (admin *Admin) MountTo(mux *http.ServeMux) {
 func (admin *Admin) MuxHandler() http.Handler {
 	router := admin.router
 
-	admin.ServeAuth()
 	admin.ServeUIMeta()
+
+	if admin.AdminConfig.Auth != nil {
+		admin.ServeAuth()
+	}
 
 	if admin.AdminConfig.UI {
 		admin.ServeUI()

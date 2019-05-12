@@ -3,39 +3,53 @@ package admin
 import (
 	"encoding/json"
 	"net/http"
-	"path"
 
 	"github.com/julienschmidt/httprouter"
 )
 
 type AuthUser struct {
-	FirstName string `json:"firstname"`
-	LastName  string `json:"lastname"`
-	Nickname  string `json:"nickname"`
-	Email     string `json:"email"`
-	Password  string `json:"password"`
-	Role      *Role
+	Username string `json:"username"`
+	Password string `json:"password"`
+	Email    string `json:"email"`
+	Role     Role
 }
 
 type AdminAuth struct {
 	Users []AuthUser
 }
 
-func (admin Admin) ServeAuth() {
-	admin.router.POST(path.Join(admin.ApiPrefix, "login"), func(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
-		var user []byte
+type UIAuth struct {
+	Error   bool   `json:"error"`
+	Message string `json:"message,omitempty"`
+	Token   string `json:"token,omitempty"`
+}
 
-		for _, i := range admin.Auth.Users {
-			if i.Nickname == "iegor" {
-				user, _ = json.Marshal(i)
+func (admin *Admin) ServeAuth() {
+	admin.router.POST(admin.ApiPrefix+"/auth", func(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
+		var authUser AuthUser
+		for _, user := range admin.Auth.Users {
+			if user.Username == "iegora" && user.Password == "2008a" {
+				authUser = user
 				break
 			}
 		}
 
-		if user != nil {
-			w.Write([]byte(user))
+		if authUser.Username != "" && authUser.Password != "" {
+			data, _ := json.Marshal(UIAuth{
+				Error: false,
+				Token: "test-123",
+			})
+
+			w.Header().Add("Content-Type", "application/json")
+			w.Write([]byte(data))
 		} else {
-			http.Error(w, "Bad credentials", http.StatusUnauthorized)
+			data, _ := json.Marshal(UIAuth{
+				Error:   true,
+				Message: "Invalid credentials",
+			})
+
+			w.Header().Add("Content-Type", "application/json")
+			w.Write([]byte(data))
 		}
 	})
 }

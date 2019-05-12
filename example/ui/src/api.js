@@ -9,13 +9,13 @@ export function fetchMeta () {
     .then(res => res.json())
 }
 
-export function login (email, password) {
+export function auth (email, password) {
   const requestOpts = {
     method: 'POST',
     body: JSON.stringify({ email, password })
   }
 
-  return fetch(`${basePath}/login`, requestOpts)
+  return fetch(`${basePath}/auth`, requestOpts)
     .then(res => res.json())
 }
 

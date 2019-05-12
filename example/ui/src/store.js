@@ -7,8 +7,8 @@ Vue.use(Vuex)
 export default new Vuex.Store({
   state: {
     meta: null,
-    loggedIn: false,
-    user: null
+    user: null,
+    loggedIn: false
   },
   mutations: {
     updateMeta (state, data) {
@@ -26,15 +26,17 @@ export default new Vuex.Store({
     }
   },
   actions: {
-    login ({ commit }, { email, password }) {
-      api.login(email, password)
+    auth ({ commit }, { username, password }) {
+      api.auth(username, password)
         .then(data => {
           console.log('data:', data)
 
           commit('updateUser', data)
         })
         .catch(err => {
-          console.error('error:', err)
+          console.error('actions.auth:', err)
+
+          commit('updateUser', null)
         })
     },
 
@@ -48,7 +50,7 @@ export default new Vuex.Store({
           commit('updateMeta', data)
         })
         .catch(err => {
-          console.error('fetchMeta', err)
+          console.error('actions.fetchMeta', err)
 
           commit('updateMeta', null)
         })

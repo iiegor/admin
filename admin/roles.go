@@ -5,12 +5,12 @@ type Role struct {
 	Permissions []string
 }
 
-var AdminRole = &Role{
+var AdminRole = Role{
 	Name:        "Admin",
 	Permissions: []string{"read", "create", "delete", "update"},
 }
 
-var GuestRole = &Role{
+var GuestRole = Role{
 	Name:        "Guest",
 	Permissions: []string{"read"},
 }

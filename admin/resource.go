@@ -73,9 +73,9 @@ func (res *Resource) RegisterRoutes() {
 		if err != nil {
 			logrus.WithFields(logrus.Fields{
 				"resource": res.Name,
-				"method": "read",
-				"url": r.URL,
-				"error": err.Error(),
+				"method":   "read",
+				"url":      r.URL,
+				"error":    err.Error(),
 			}).Error()
 
 			http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -102,7 +102,7 @@ func (res *Resource) RegisterRoutes() {
 	//  A solution could be storing the current method inside another variable and use that instead.
 	for _, method := range res.methods {
 		switch strings.ToLower(method) {
-		case "read":			
+		case "read":
 			var resourcePath = path.Join(rootPath, res.ParamID())
 			res.GetAdmin().router.GET(resourcePath, ChainMiddlewares(func(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
 				var resourceID = p.ByName(res.ParamID()[1:])
@@ -112,9 +112,9 @@ func (res *Resource) RegisterRoutes() {
 				if err != nil {
 					logrus.WithFields(logrus.Fields{
 						"resource": res.Name,
-						"method": method,
-						"url": r.URL,
-						"error": err.Error(),
+						"method":   method,
+						"url":      r.URL,
+						"error":    err.Error(),
 					}).Error()
 
 					http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -152,7 +152,7 @@ func (res *Resource) RegisterRoutes() {
 
 			logrus.WithFields(logrus.Fields{
 				"resource": res.Name,
-				"method":  	method,
+				"method":   method,
 				"path":     resourcePath,
 			}).Debug("DELETE route registered")
 		case "update":

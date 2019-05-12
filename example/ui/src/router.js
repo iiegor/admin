@@ -1,7 +1,7 @@
 import Vue from 'vue'
 import Router from 'vue-router'
 import Dashboard from '@/pages/Dashboard'
-import Login from '@/pages/Login'
+import Auth from '@/pages/Auth'
 import Resource from '@/pages/Resource'
 import Metrics from '@/pages/Metrics'
 import store from './store'
@@ -23,9 +23,9 @@ const router = new Router({
     {
       // Para identificar fácilmente
       // la ruta en los guards
-      name: 'login',
-      path: '/login',
-      component: Login
+      name: 'auth',
+      path: '/auth',
+      component: Auth
     },
     {
       path: '/',
@@ -41,8 +41,8 @@ const router = new Router({
 router.beforeEach((to, from, next) => {
   // Redireccionar al login
   // cuando la ruta sea otra y no esté logeado.
-  if (!store.state.loggedIn && to.name !== 'login') {
-    return next('/login')
+  if (!store.state.loggedIn && to.name !== 'auth') {
+    return next('/auth')
   }
 
   next()

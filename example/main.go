@@ -16,11 +16,11 @@ import (
 // y evitaría tener que recompilar el código
 // para cualquier cambio relacionado con estos.
 type Course struct {
-	Id       int64  `json:"id"`
-	Name     string `json:"name"`
-	Province string `json:"province"`
-	Location string `json:"location"`
-	Country  string `json:"country"`
+	Id       int64   `json:"id"`
+	Name     string  `json:"name"`
+	Province string  `json:"province"`
+	Location string  `json:"location"`
+	Country  string  `json:"country"`
 }
 
 var (
@@ -36,19 +36,15 @@ func main() {
 	AdminAuth := &admin.AdminAuth{
 		Users: []admin.AuthUser{
 			{
-				FirstName: "Iegor",
-				LastName:  "A.",
-				Nickname:  "iegor",
+				Username:  "iegor",
+				Password:  "2008",
 				Email:     "iegorazuaga@gmail.com",
-				Password:  "iegor123",
 				Role:      admin.AdminRole,
-			},
+			},                                            
 			{
-				FirstName: "Guest",
-				LastName:  "User",
-				Nickname:  "guest",
-				Email:     "guest+user@gmail.com",
+				Username:  "guest",
 				Password:  "iegor123",
+				Email:     "guest+user@gmail.com",
 				Role:      admin.GuestRole,
 			},
 		},
@@ -68,6 +64,12 @@ func main() {
 	mux := http.NewServeMux()
 
 	Admin.MountTo(mux)
+
+	if !debug {
+		println("===========================")
+		println("Running on production mode!")
+		println("===========================\n")
+	}
 
 	log.Printf("Listening at http://localhost:%v\n", port)
 	log.Fatal(http.ListenAndServe(fmt.Sprintf(":%v", port), mux))
