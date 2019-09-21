@@ -1,4 +1,4 @@
-module alsur/admin
+module iegor/admin
 
 require (
 	github.com/go-xorm/builder v0.3.3
@@ -13,3 +13,5 @@ require (
 	golang.org/x/crypto v0.0.0-20181203042331-505ab145d0a9
 	golang.org/x/sys v0.0.0-20181228144115-9a3f9b0469bb
 )
+
+go 1.13

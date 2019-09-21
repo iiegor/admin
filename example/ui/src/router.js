@@ -1,9 +1,10 @@
 import Vue from 'vue'
 import Router from 'vue-router'
 import Dashboard from '@/pages/Dashboard'
-import Login from '@/pages/Login'
-import ModelView from '@/pages/ModelView'
+import Auth from '@/pages/Auth'
+import Resource from '@/pages/Resource'
 import Metrics from '@/pages/Metrics'
+import store from './store'
 
 Vue.use(Router)
 
@@ -12,21 +13,21 @@ const router = new Router({
   mode: 'history',
   routes: [
     {
-      path: '/',
-      component: Dashboard
-    },
-    {
       path: '/resource/:name',
-      component: ModelView,
-      props: (route) => ({ query: route.query.q })
+      component: Resource
     },
     {
       path: '/metrics',
       component: Metrics
     },
     {
-      path: '/login',
-      component: Login
+      name: 'auth', // nombre para identificar la ruta en los hooks
+      path: '/auth',
+      component: Auth
+    },
+    {
+      path: '/',
+      component: Dashboard
     },
     {
       path: '*',
@@ -36,7 +37,12 @@ const router = new Router({
 })
 
 router.beforeEach((to, from, next) => {
-  // ..
+  // Redireccionar al login
+  // cuando no esté logeado y la ruta no sea la página de login.
+  if (!store.state.loggedIn && to.name !== 'auth') {
+    return next('/auth')
+  }
+
   next()
 })
 

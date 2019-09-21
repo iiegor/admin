@@ -1,13 +1,15 @@
 <template>
-  <div class="columns is-centered is-gapless">
+  <div class="page columns is-centered is-gapless">
     <div class="column is-10-desktop">
       <div class="box">
-        <div v-if="loading">Loading...</div>
+        <div class="columns">
+          <div v-if="loading">Loading...</div>
 
-        <div class="columns" v-if="data">
-          <div v-for="item in data.resources" :key="item.name">
-            {{ item.name }}: {{ item.hits }}
-          </div>
+          <template v-if="data">
+            <div v-for="item in data.resources" :key="item.name">
+              {{ item.name }}: {{ item.hits }}
+            </div>
+          </template>
         </div>
       </div>
     </div>

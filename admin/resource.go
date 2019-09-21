@@ -71,6 +71,13 @@ func (res *Resource) RegisterRoutes() {
 		fetchFromDatabase := res.NewSlice()
 		err = res.GetAdmin().DB.Table(res.TableName).Limit(query.Limit, query.Offset).Find(fetchFromDatabase)
 		if err != nil {
+			logrus.WithFields(logrus.Fields{
+				"resource": res.Name,
+				"method":   "read",
+				"url":      r.URL,
+				"error":    err.Error(),
+			}).Error()
+
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
@@ -91,10 +98,12 @@ func (res *Resource) RegisterRoutes() {
 		"path":     rootPath,
 	}).Debug("GET route registered")
 
+	// FIXME: Logs will output method=delete since it's the last iteration done.
+	//  A solution could be storing the current method inside another variable and use that instead.
 	for _, method := range res.methods {
 		switch strings.ToLower(method) {
-		case "read":			
-			var resourcePath = path.Join(res.RoutePrefix(), res.ToParam(), res.ParamID())
+		case "read":
+			var resourcePath = path.Join(rootPath, res.ParamID())
 			res.GetAdmin().router.GET(resourcePath, ChainMiddlewares(func(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
 				var resourceID = p.ByName(res.ParamID()[1:])
 
@@ -103,8 +112,9 @@ func (res *Resource) RegisterRoutes() {
 				if err != nil {
 					logrus.WithFields(logrus.Fields{
 						"resource": res.Name,
-						"method": method,
-						"error": err.Error(),
+						"method":   method,
+						"url":      r.URL,
+						"error":    err.Error(),
 					}).Error()
 
 					http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -124,7 +134,7 @@ func (res *Resource) RegisterRoutes() {
 				"path":     resourcePath,
 			}).Debug("GET route registered")
 		case "create":
-			var resourcePath = path.Join(res.RoutePrefix(), res.ToParam())
+			var resourcePath = path.Join(rootPath)
 			res.GetAdmin().router.PUT(resourcePath, ChainMiddlewares(func(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
 				w.Write([]byte("Hello, World!"))
 			}, MetricsMiddleware(res)))
@@ -135,7 +145,7 @@ func (res *Resource) RegisterRoutes() {
 				"path":     resourcePath,
 			}).Debug("PUT route registered")
 		case "delete":
-			var resourcePath = path.Join(res.RoutePrefix(), res.ToParam(), res.ParamID())
+			var resourcePath = path.Join(rootPath, res.ParamID())
 			res.GetAdmin().router.DELETE(resourcePath, ChainMiddlewares(func(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
 				w.Write([]byte("Hello, World!"))
 			}, MetricsMiddleware(res)))
@@ -146,7 +156,7 @@ func (res *Resource) RegisterRoutes() {
 				"path":     resourcePath,
 			}).Debug("DELETE route registered")
 		case "update":
-			var resourcePath = path.Join(res.RoutePrefix(), res.ToParam(), res.ParamID())
+			var resourcePath = path.Join(rootPath, res.ParamID())
 			res.GetAdmin().router.PATCH(resourcePath, ChainMiddlewares(func(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
 				w.Write([]byte("Hello, World!"))
 			}, MetricsMiddleware(res)))
@@ -212,7 +222,7 @@ func (res Resource) ToParam() string {
 
 // ParamId e.g. ":course_id"
 func (res Resource) ParamID() string {
-	return fmt.Sprintf(":%v_id", inflection.Singular(ToParamString(res.Name)))
+	return fmt.Sprintf(":%v_id", inflection.Singular(res.ToParam()))
 }
 
 func (res Resource) GetAdmin() *Admin {
@@ -221,5 +231,5 @@ func (res Resource) GetAdmin() *Admin {
 
 // RoutePrefix returns e.g. "/admin/api"
 func (res Resource) RoutePrefix() string {
-	return path.Join(res.admin.Prefix, "api")
+	return path.Join(res.admin.Prefix, res.GetAdmin().ApiPrefix)
 }

@@ -4,22 +4,29 @@
       <div class="level-item notification has-background-warning has-text-grey-dark">Local Development</div>
     </div>
 
-    <div class="columns is-gapless is-fullwidth is-fullheight">
-      <div class="column is-narrow" v-if="!loading">
-        <Sidebar />
-      </div>
+    <template v-if="$store.state.loggedIn">
+      <div class="columns is-gapless is-fullwidth is-fullheight">
+        <div class="column is-narrow" v-if="!loading">
+          <Sidebar />
+        </div>
 
-      <div class="column view">
-        <Spinner v-if="loading" />
+        <div class="column view">
+          <Spinner v-if="loading" />
 
-        <Header v-if="!loading" />
-        <router-view class="view-container is-fullheight" v-if="!loading" />
+          <Header v-if="!loading" />
+          <router-view class="view-container is-fullheight" v-if="!loading" />
+        </div>
       </div>
-    </div>
+    </template>
+
+    <template v-if="!$store.state.loggedIn">
+      <router-view class="view-container is-fullheight" v-if="!loading" />
+    </template>
   </div>
 </template>
 
 <script>
+import { mapState } from 'vuex'
 import Sidebar from '@/components/Sidebar'
 import Header from '@/components/Header'
 import Spinner from '@/components/Spinner'
@@ -37,26 +44,39 @@ export default {
       loading: true
     }
   },
+  computed: {
+    ...mapState([
+      'loggedIn',
+      'meta'
+    ])
+  },
   mounted () {
     this.fetchMeta()
   },
+  watch: {
+    loggedIn (val, oldVal) {
+      // Viene de hacer login
+      // por lo que le redirijimos
+      if (val) {
+        this.$router.replace('/')
+      }
+
+      this.fetchMeta()
+    },
+
+    meta (val, oldVal) {
+      this.loading = false
+    }
+  },
   methods: {
     fetchMeta () {
-      fetch('/api/ui/meta')
-        .then(res => res.json())
-        .then(data => {
-          this.$store.commit('meta', data)
+      if (this.loggedIn) {
+        this.loading = true
 
-          this.loading = false
-        })
-        .catch(err => {
-          console.error('fetchMeta', err)
-
-          // retry meta fetch after 5s
-          setTimeout(() => {
-            this.fetchMeta()
-          }, 5000)
-        })
+        this.$store.dispatch('fetchMeta')
+      } else {
+        this.loading = false
+      }
     }
   }
 }

@@ -1,0 +1,13 @@
+{
+	"folders": [
+		{
+			"path": "admin"
+		},
+		{
+			"path": "example"
+		}
+	],
+	"settings": {
+		"breadcrumbs.enabled": true
+	}
+}
