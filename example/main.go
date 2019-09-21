@@ -8,7 +8,7 @@ import (
 
 	_ "github.com/go-sql-driver/mysql"
 
-	"alsur/admin"
+	"iegor/admin"
 )
 
 // TODO: Abstraer los modelos.

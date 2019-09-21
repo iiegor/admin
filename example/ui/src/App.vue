@@ -44,7 +44,12 @@ export default {
       loading: true
     }
   },
-  computed: mapState(['loggedIn', 'meta']),
+  computed: {
+    ...mapState([
+      'loggedIn',
+      'meta'
+    ])
+  },
   mounted () {
     this.fetchMeta()
   },

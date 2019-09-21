@@ -21,9 +21,7 @@ const router = new Router({
       component: Metrics
     },
     {
-      // Para identificar fácilmente
-      // la ruta en los guards
-      name: 'auth',
+      name: 'auth', // nombre para identificar la ruta en los hooks
       path: '/auth',
       component: Auth
     },
@@ -40,7 +38,7 @@ const router = new Router({
 
 router.beforeEach((to, from, next) => {
   // Redireccionar al login
-  // cuando la ruta sea otra y no esté logeado.
+  // cuando no esté logeado y la ruta no sea la página de login.
   if (!store.state.loggedIn && to.name !== 'auth') {
     return next('/auth')
   }
