@@ -10,21 +10,27 @@ import (
 	"github.com/julienschmidt/httprouter"
 )
 
-type UIMetaResource struct {
-	Label    string `json:"label"`
-	Endpoint string `json:"endpoint"`
-}
-
 type UIMeta struct {
 	Resources []UIMetaResource `json:"resources"`
 }
 
+// TODO: Necesitaríamos enviar una definición de los tipos de datos
+type UIMetaResource struct {
+	Id      string            `json:"id"`
+	Name    string            `json:"name"`
+	Methods []string          `json:"methods"`
+	Fields  map[string]string `json:"fields"`
+}
+
 func (admin Admin) BuildUIMeta() UIMeta {
 	meta := UIMeta{}
+
 	for _, res := range admin.resources {
 		metaRes := UIMetaResource{
-			Label:    inflection.Plural(res.Name),
-			Endpoint: inflection.Plural(res.ToParam()),
+			Id:      inflection.Plural(res.ToParam()),
+			Name:    inflection.Plural(res.Name),
+			Methods: res.methods,
+			Fields:  res.GetFields(),
 		}
 		meta.Resources = append(meta.Resources, metaRes)
 	}
