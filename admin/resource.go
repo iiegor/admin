@@ -147,7 +147,27 @@ func (res *Resource) RegisterRoutes() {
 		case "delete":
 			var resourcePath = path.Join(rootPath, res.ParamID())
 			res.GetAdmin().router.DELETE(resourcePath, ChainMiddlewares(func(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
-				w.Write([]byte("Hello, World!"))
+				var resourceID = p.ByName(res.ParamID()[1:])
+
+				deleteFromDatabase := res.NewStruct()
+				affected, err := res.GetAdmin().DB.Table(res.TableName).Where("id = ?", resourceID).Delete(deleteFromDatabase)
+				if err != nil {
+					logrus.WithFields(logrus.Fields{
+						"resource": res.Name,
+						"method":   method,
+						"url":      r.URL,
+						"error":    err.Error(),
+					}).Error()
+
+					http.Error(w, err.Error(), http.StatusInternalServerError)
+					return
+				}
+
+				if affected > 0 {
+					data, _ := json.Marshal("ok")
+					w.Header().Add("Content-Type", "application/json")
+					w.Write([]byte(data))
+				}
 			}, MetricsMiddleware(res)))
 
 			logrus.WithFields(logrus.Fields{
@@ -218,6 +238,25 @@ func (res *Resource) NewSlice() interface{} {
 // ToParam e.g. "MyModel" -> "mymodel"
 func (res Resource) ToParam() string {
 	return ToParamString(res.Name)
+}
+
+// GetFields e.g. ["id" => "int64", "name" => "string" ...]
+func (res Resource) GetFields() map[string]string {
+	s := reflect.ValueOf(res.value).Elem()
+	sType := s.Type()
+
+	fields := map[string]string{}
+	for i := 0; i < s.NumField(); i++ {
+		field := sType.Field(i)
+
+		// TODO: fallback cuando el tag json no esté definido
+		fieldName := field.Tag.Get("json")
+		fieldType := field.Type.String()
+
+		fields[fieldName] = fieldType
+	}
+
+	return fields
 }
 
 // ParamId e.g. ":course_id"
