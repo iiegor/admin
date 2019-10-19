@@ -11,16 +11,13 @@ import (
 	"iegor/admin"
 )
 
-// TODO: Abstraer los modelos.
-// Se podría usar un config para cargarlos
-// y evitaría tener que recompilar el código
-// para cualquier cambio relacionado con estos.
+// TODO: Valorar abstraer los modelos.
 type Course struct {
-	Id       int64   `json:"id"`
-	Name     string  `json:"name"`
-	Province string  `json:"province"`
-	Location string  `json:"location"`
-	Country  string  `json:"country"`
+	Id       int64  `json:"id"`
+	Name     string `json:"name"`
+	Province string `json:"province"`
+	Location string `json:"location"`
+	Country  string `json:"country"`
 }
 
 var (
@@ -36,16 +33,16 @@ func main() {
 	AdminAuth := &admin.AdminAuth{
 		Users: []admin.AuthUser{
 			{
-				Username:  "iegor",
-				Password:  "2008",
-				Email:     "iegorazuaga@gmail.com",
-				Role:      admin.AdminRole,
-			},                                            
+				Username: "iegor",
+				Password: "2008",
+				Email:    "iegorazuaga@gmail.com",
+				Role:     admin.AdminRole,
+			},
 			{
-				Username:  "guest",
-				Password:  "iegor123",
-				Email:     "guest+user@gmail.com",
-				Role:      admin.GuestRole,
+				Username: "guest",
+				Password: "iegor123",
+				Email:    "guest+user@gmail.com",
+				Role:     admin.GuestRole,
 			},
 		},
 	}
@@ -54,7 +51,7 @@ func main() {
 		Prefix: "/",
 		Debug:  debug,
 		UI:     !debug,
-		DB:     admin.NewDB("mysql", "root:iegor@/example_db?charset=utf8&parseTime=True"),
+		DB:     admin.NewDB("mysql", "root:iegor@/iegor_db?charset=utf8&parseTime=True"),
 		Auth:   AdminAuth,
 	})
 	Admin.AddResource(new(Course), admin.ResourceConfig{
