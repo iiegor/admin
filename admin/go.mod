@@ -10,8 +10,7 @@ require (
 	github.com/julienschmidt/httprouter v1.2.0
 	github.com/rainycape/unidecode v0.0.0-20150907023854-cb7f23ec59be // indirect
 	github.com/sirupsen/logrus v1.2.0
-	golang.org/x/crypto v0.0.0-20190308221718-c2843e01d9a2 // indirect
-	golang.org/x/sys v0.0.0-20190922100055-0a153f010e69 // indirect
+	golang.org/x/crypto v0.1.0 // indirect
 	google.golang.org/appengine v1.1.0 // indirect
 )
 
